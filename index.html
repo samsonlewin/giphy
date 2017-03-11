@@ -86,7 +86,7 @@ function displayGifInfo() {
 
 
           //Creating a div to hold the gif
-          var gifDiv = $("<div class='gif'>");
+          var $gifDiv = $("<div class='oneGif'>");
 
           // Storing the rating data
           var rating = response.data[i].rating;
@@ -95,29 +95,53 @@ function displayGifInfo() {
           var pOne = $("<p>").text("Rating: " + rating);
 
           // Displaying the rating
-          gifDiv.append(pOne);
+          $gifDiv.append(pOne);
 
 
           // Retrieving the URL for the image
-          var imgURL = response.data[i].images.original.url;
+          var moveImageURL = response.data[i].images.original.url;
+          var stillImageURL = response.data[i].images.original_still.url;
 
           // Creating an element to hold the image
-          var image = $("<img>").attr("src", imgURL);
+          var image = $("<img>").attr("src", moveImageURL);
+
+          image.attr("data-still", stillImageURL);
+          image.attr("data-animate",moveImageURL);
+          image.attr("data-state", "animate");
 
           // Appending the image
-          gifDiv.append(image);
+          $gifDiv.append(image);
 
-          // Putting the entire movie above the previous movies
-          $("#gif-view").prepend(gifDiv);
-
-          //var stillImageURL = response.data[i].images.original_still.url;
-      	  //$("img").attr("src", stillImageURL);
+          // Putting the entire gif above the previous gifs
+          $("#gif-view").prepend($gifDiv);
+         
           
-          //STOP AND PLAY MY GIF??
-          //When the user clicks on a button, the page should grab 10 static, non-animated gif images from the GIPHY API and place them on the page. 
-          //When the user clicks one of the still GIPHY images, the gif should animate. If the user clicks the gif again, it should stop playing.
+         
+        
 
          }
+         var state = $("img").attr("data-state");
+
+        // start and stop GIF
+
+         $("img").on("click",function(){
+          
+
+          if (state !== "animate"){
+          $(this).attr("src", $(this).attr("data-animate"));
+          state = "animate";
+          $(this).attr("data-state","animate");
+
+        }else if (state === "animate"){
+          $(this).attr("src",$(this).attr("data-still"));
+          state = "still";
+          $(this).attr("data-state","still");
+
+
+        }
+        console.log(image);
+        })
+
         });
 
       }
@@ -162,7 +186,7 @@ function renderButtons() {
 
       // Adding a click event listener to all elements with a class of "movie"
       $("#buttons-view").on("click", ".gif", displayGifInfo);
-      
+
 
       // Calling the renderButtons function to display the intial buttons
       renderButtons();
